@@ -52,10 +52,10 @@ import bcrypt from "bcrypt"
 //just before saving decrypt the pass
 userSchema.pre("save",async function(next){
     if (!this.isModified("password")) return next(); 
-    this.password=bcrypt.hash(this.password,10)
+    this.password=await bcrypt.hash(this.password,10)
     next()
 })
-//add a method to  userschema,bcrypt.compare returns a promise
+//add a method to userschema,bcrypt.compare returns a promise
  userSchema.methods.isPasswordCorrect=async function(password) {
     return await bcrypt.compare(password,this.password)
  }
