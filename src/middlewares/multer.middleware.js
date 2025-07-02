@@ -1,9 +1,4 @@
 import multer from "multer"
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> d18a9f5a8a045de0fd889b1383193f2b336c2b23
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
