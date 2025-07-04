@@ -3,6 +3,14 @@ import { ApiError } from "../utils/ApiError.js"
 import {User} from "../models/user.model.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
+import fs from "fs";
+import path from "path";
+console.log("✅ Loaded Cloudinary config:", {
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET ? "loaded" : "missing"
+});
+
 
 const registerUser=asyncHandler( async (req,res)=>{
     //get user detial from frontend using postman in dev phase
@@ -15,8 +23,12 @@ const registerUser=asyncHandler( async (req,res)=>{
     //check for user creation
     //return res 
     
+
+console.log("bye")
     const {fullname,email,username,password}=req.body
-   
+   console.log('req.body:', req.body);
+console.log('req.files:', req.files);
+
     if ([fullname,email,username,password].some((field)=>
 field?.trim()==="")
      ) {
@@ -28,15 +40,25 @@ field?.trim()==="")
     if (existedUser) {
         throw new ApiError(409,"User with email or username already exists")
     }
-    const avatarLocalPath=req.files?.avatar[0]?.path;
-   const coverImageLocalPath= req.files?.coverImage[0]?.path;
+    const avatarLocalPath = req.files?.avatar?.[0]?.path;
+const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
+
    if (!avatarLocalPath) {
-    throw new ApiError(400,"Avatar file is required")
+    throw new ApiError(400,"Avatar file is required,please jupload it")
    }
-   const avatar=await uploadOnCloudinary(avatarLocalPath)
+  
+
+
+const avatarAbsolutePath = path.resolve(avatarLocalPath);
+   const avatar = await uploadOnCloudinary(avatarAbsolutePath);
+console.log("Absolute path:", avatarAbsolutePath);
+
   const coverImage= await uploadOnCloudinary(coverImageLocalPath)
+  console.log('req.files:', req.files);
+console.log('avatarLocalPath:', avatarLocalPath);
+
    if (!avatar) {
-     throw new ApiError(400,"Avatar file is required")
+     throw new ApiError(400,"Avatar file is required on cloudinary")
    }
    const user=await User.create({
     fullname,
