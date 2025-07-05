@@ -75,6 +75,7 @@ userSchema.pre("save",async function(next){
         }
     )
  }
+ //jwt .sign takes three parameters payload,secret,options]
  userSchema.methods.generateRefreshToken=function(){
     return jwt.sign(
         {
